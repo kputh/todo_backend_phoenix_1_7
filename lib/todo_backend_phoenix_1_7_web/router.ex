@@ -7,6 +7,8 @@ defmodule TodoBackendPhoenix17Web.Router do
 
   scope "/api", TodoBackendPhoenix17Web do
     pipe_through :api
+
+    resources "/todos", TodoController, except: [:new, :edit]
   end
 
   # Enable LiveDashboard in development
