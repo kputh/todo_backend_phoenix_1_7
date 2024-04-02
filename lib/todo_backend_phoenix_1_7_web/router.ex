@@ -9,6 +9,7 @@ defmodule TodoBackendPhoenix17Web.Router do
     pipe_through :api
 
     resources "/todos", TodoController, except: [:new, :edit]
+    delete "/todos", TodoController, :delete_all
   end
 
   # Enable LiveDashboard in development

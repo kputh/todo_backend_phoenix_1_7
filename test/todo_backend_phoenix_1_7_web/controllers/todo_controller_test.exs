@@ -6,16 +6,14 @@ defmodule TodoBackendPhoenix17Web.TodoControllerTest do
   alias TodoBackendPhoenix17.ToDos.Todo
 
   @create_attrs %{
-    title: "some title",
-    order: 42,
-    completed: true
+    title: "some title"
   }
   @update_attrs %{
     title: "some updated title",
     order: 43,
-    completed: false
+    completed: true
   }
-  @invalid_attrs %{title: nil, order: nil, completed: nil}
+  @invalid_attrs %{title: nil}
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
@@ -24,23 +22,25 @@ defmodule TodoBackendPhoenix17Web.TodoControllerTest do
   describe "index" do
     test "lists all todos", %{conn: conn} do
       conn = get(conn, ~p"/api/todos")
-      assert json_response(conn, 200)["data"] == []
+      assert json_response(conn, 200) == []
     end
   end
 
   describe "create todo" do
     test "renders todo when data is valid", %{conn: conn} do
-      conn = post(conn, ~p"/api/todos", todo: @create_attrs)
-      assert %{"id" => id} = json_response(conn, 201)["data"]
+      conn = post(conn, ~p"/api/todos", @create_attrs)
+      assert %{"id" => id} = json_response(conn, 201)
 
       conn = get(conn, ~p"/api/todos/#{id}")
+      url = "http://www.example.com/api/todos/#{id}"
 
       assert %{
                "id" => ^id,
-               "completed" => true,
-               "order" => 42,
-               "title" => "some title"
-             } = json_response(conn, 200)["data"]
+               "completed" => false,
+               "order" => 0,
+               "title" => "some title",
+               "url" => ^url
+             } = json_response(conn, 200)
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
@@ -53,21 +53,23 @@ defmodule TodoBackendPhoenix17Web.TodoControllerTest do
     setup [:create_todo]
 
     test "renders todo when data is valid", %{conn: conn, todo: %Todo{id: id} = todo} do
-      conn = put(conn, ~p"/api/todos/#{todo}", todo: @update_attrs)
-      assert %{"id" => ^id} = json_response(conn, 200)["data"]
+      conn = put(conn, ~p"/api/todos/#{todo}", @update_attrs)
+      assert %{"id" => ^id} = json_response(conn, 200)
 
       conn = get(conn, ~p"/api/todos/#{id}")
+      url = "http://www.example.com/api/todos/#{id}"
 
       assert %{
                "id" => ^id,
-               "completed" => false,
+               "completed" => true,
                "order" => 43,
-               "title" => "some updated title"
-             } = json_response(conn, 200)["data"]
+               "title" => "some updated title",
+               "url" => ^url
+             } = json_response(conn, 200)
     end
 
     test "renders errors when data is invalid", %{conn: conn, todo: todo} do
-      conn = put(conn, ~p"/api/todos/#{todo}", todo: @invalid_attrs)
+      conn = put(conn, ~p"/api/todos/#{todo}", @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
     end
   end

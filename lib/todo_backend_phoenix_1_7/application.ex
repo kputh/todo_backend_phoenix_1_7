@@ -10,7 +10,8 @@ defmodule TodoBackendPhoenix17.Application do
     children = [
       TodoBackendPhoenix17Web.Telemetry,
       TodoBackendPhoenix17.Repo,
-      {DNSCluster, query: Application.get_env(:todo_backend_phoenix_1_7, :dns_cluster_query) || :ignore},
+      {DNSCluster,
+       query: Application.get_env(:todo_backend_phoenix_1_7, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: TodoBackendPhoenix17.PubSub},
       # Start a worker by calling: TodoBackendPhoenix17.Worker.start_link(arg)
       # {TodoBackendPhoenix17.Worker, arg},

@@ -55,9 +55,30 @@ defmodule TodoBackendPhoenix17.ToDosTest do
       assert_raise Ecto.NoResultsError, fn -> ToDos.get_todo!(todo.id) end
     end
 
+    test "delete_all/0 deletes all todos" do
+      todo = todo_fixture()
+      ToDos.delete_all()
+      assert_raise Ecto.NoResultsError, fn -> ToDos.get_todo!(todo.id) end
+    end
+
+    test "delete_all/0 return the number of deleted todos" do
+      todo_fixture()
+      todo_fixture()
+      assert {2, nil} = ToDos.delete_all()
+    end
+
     test "change_todo/1 returns a todo changeset" do
       todo = todo_fixture()
       assert %Ecto.Changeset{} = ToDos.change_todo(todo)
+    end
+
+    test "query_max_order/0 returns the maximum todo order" do
+      todo_fixture(%{order: 5_000})
+      assert 5_000 = ToDos.query_max_order()
+    end
+
+    test "query_max_order/0 returns nil if there are no todos" do
+      refute nil = ToDos.query_max_order()
     end
   end
 end

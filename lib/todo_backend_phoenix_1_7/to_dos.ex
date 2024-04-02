@@ -89,6 +89,10 @@ defmodule TodoBackendPhoenix17.ToDos do
     Repo.delete(todo)
   end
 
+  def delete_all() do
+    Repo.delete_all(Todo)
+  end
+
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking todo changes.
 
@@ -100,5 +104,9 @@ defmodule TodoBackendPhoenix17.ToDos do
   """
   def change_todo(%Todo{} = todo, attrs \\ %{}) do
     Todo.changeset(todo, attrs)
+  end
+
+  def query_max_order() do
+    Repo.aggregate(Todo, :max, :order)
   end
 end
